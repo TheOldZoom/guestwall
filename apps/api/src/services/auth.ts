@@ -22,7 +22,7 @@ export async function registerUser(
     throw new Error("Username or email already in use");
   }
 
-  const passwordHash = await Bun.password.hash(data.password);
+  const passwordHash = await Bun.password.hash(data.password, "argon2id");
 
   const user = await prisma.user.create({
     data: {
@@ -68,8 +68,9 @@ export async function loginUser(
   }
 
   const isPasswordValid = await Bun.password.verify(
-    user.passwordHash,
     data.password,
+    user.passwordHash,
+    "argon2id",
   );
 
   if (!isPasswordValid) {
