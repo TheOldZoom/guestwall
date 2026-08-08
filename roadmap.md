@@ -15,9 +15,9 @@
 ### v0.2 — Actually usable
 
 - [ ] Dashboard
-- [ ] Message moderation
-- [ ] Delete/hide messages
-- [ ] Pin messages
+- [x] Message moderation
+- [x] Delete/hide messages
+- [x] Pin messages
 - [ ] Rate limiting
 - [ ] Basic anti-spam
 - [ ] Mobile UI
@@ -39,7 +39,6 @@
 - [ ] Custom domains
 - [ ] Webhooks
 - [ ] API keys
-- [ ] Public API
 - [ ] Advanced moderation
 - [ ] Analytics
 - [ ] Multiple walls per account

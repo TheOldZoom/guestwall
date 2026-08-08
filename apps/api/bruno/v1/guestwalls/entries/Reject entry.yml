@@ -1,0 +1,22 @@
+info:
+  name: Reject entry
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{BASE_URL}}/v1/guestwalls/:slug/entries/:entryId/reject"
+  params:
+    - name: entryId
+      value: d6030056-fade-40c5-bd42-e7b775871230
+      type: path
+    - name: slug
+      value: zoom
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

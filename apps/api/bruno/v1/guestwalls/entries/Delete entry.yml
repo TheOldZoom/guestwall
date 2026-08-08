@@ -1,0 +1,22 @@
+info:
+  name: Delete entry
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{BASE_URL}}/v1/guestwalls/:slug/entries/:entryId"
+  params:
+    - name: slug
+      value: zoom
+      type: path
+    - name: entryId
+      value: d6030056-fade-40c5-bd42-e7b775871230
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
