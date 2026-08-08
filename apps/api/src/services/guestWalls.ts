@@ -5,6 +5,21 @@ export { GuestWallError };
 
 const PAGE_SIZE = 20;
 
+const reservedGuestWallNames = new Set([
+  "privacy",
+  "terms",
+  "about",
+  "contact",
+  "api",
+  "auth",
+  "profile",
+  "dashboard",
+  "index",
+  "status",
+  "faq",
+  "legal",
+]);
+
 const wallSelect = {
   id: true,
   slug: true,
@@ -79,6 +94,10 @@ export async function createGuestWall(
   ownerId: string,
 ) {
   const slug = data.slug.toLowerCase().trim();
+
+  if (reservedGuestWallNames.has(slug)) {
+    throw new GuestWallError("Slug is reserved", 400);
+  }
 
   const existingWall = await prisma.guestWall.findUnique({
     where: {
