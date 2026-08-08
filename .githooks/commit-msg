@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if ! bunx commitlint --edit "$1"; then
+  echo ""
+  echo "Allowed commit types:"
+  echo ""
+  echo "  feat      New feature"
+  echo "  fix       Bug fix"
+  echo "  docs      Documentation"
+  echo "  style     Formatting changes"
+  echo "  refactor  Code refactoring"
+  echo "  perf      Performance improvement"
+  echo "  test      Tests"
+  echo "  build     Build system or dependencies"
+  echo "  ci        CI/CD changes"
+  echo "  chore     Maintenance"
+  echo "  revert    Revert a previous commit"
+  echo ""
+  echo "Format:"
+  echo "  type(scope): description"
+  echo ""
+  echo "Example:"
+  echo "  feat(auth): implement JWT authentication"
+  echo ""
+  exit 1
+fi
