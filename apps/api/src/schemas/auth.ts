@@ -1,7 +1,7 @@
 import { t } from "elysia";
 
 const usernamePattern = /^[a-zA-Z0-9_-]+$/;
-const displayNamePattern = /^[\p{L}\p{N} .,!?'’"-]+$/u;
+const displayNamePattern = /^[a-zA-Z0-9 .,!?'’"-]+$/;
 
 export const registerSchema = t.Object({
   displayName: t.Optional(

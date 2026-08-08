@@ -40,6 +40,10 @@ const wallSelect = {
   },
 } as const;
 
+export function isReservedGuestWallName(slug: string) {
+  return reservedGuestWallNames.has(slug.toLowerCase().trim());
+}
+
 type RawWall = {
   guestWallSettings: { requireApproval: boolean }[];
 } & Record<string, unknown>;
@@ -95,7 +99,7 @@ export async function createGuestWall(
 ) {
   const slug = data.slug.toLowerCase().trim();
 
-  if (reservedGuestWallNames.has(slug)) {
+  if (isReservedGuestWallName(slug)) {
     throw new GuestWallError("Slug is reserved", 400);
   }
 

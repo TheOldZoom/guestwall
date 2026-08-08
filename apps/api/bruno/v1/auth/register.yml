@@ -11,7 +11,7 @@ http:
     data: |-
       {
         "displayName": "Zoom",
-        "username": "TheOldZoom",
+        "username": "theoldzoom",
         "email": "theoldzoom@proton.me",
         "password": "CoolSecretPassword"
       }

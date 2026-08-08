@@ -5,6 +5,7 @@ import {
   getGuestWallsByOwner,
   updateGuestWall,
   deleteGuestWall,
+  isReservedGuestWallName,
 } from "../../services/guestWalls";
 import {
   createGuestWallSchema,
@@ -30,6 +31,12 @@ export const v1GuestWallRoutes = new Elysia({
   .post(
     "/",
     async ({ body, user }) => {
+      if (isReservedGuestWallName(body.slug)) {
+        return status(400, {
+          error: "Slug is reserved",
+        });
+      }
+
       const existingWall = await getGuestWallBySlug(body.slug).catch(
         () => null,
       );

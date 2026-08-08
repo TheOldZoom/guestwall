@@ -1,7 +1,7 @@
 import { t } from "elysia";
 
 const slugPattern = /^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$/;
-const titlePattern = /^[\p{L}\p{N} .,!?'’"()-]+$/u;
+const titlePattern = /^[a-zA-Z0-9 .,!?'’"()-]+$/;
 
 export const createGuestWallSchema = t.Object({
   slug: t.String({
