@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid())
+
+  displayName String?
+  username    String  @unique
+
+  email        String @unique
+  passwordHash String
+
+  emailVerifiedAt DateTime?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  guestWalls GuestWall[]
+}
+
+model GuestWall {
+  id String @id @default(uuid())
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  slug        String  @unique
+  title       String
+  description String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  guestWallEntries  GuestWallEntry[]
+  guestWallSettings GuestWallSetting[]
+}
+
+model GuestWallSetting {
+  id String @id @default(uuid())
+
+  guestWallId String    @unique
+  guestWall   GuestWall @relation(fields: [guestWallId], references: [id])
+
+  requireApproval Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum GuestWallEntryStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model GuestWallEntry {
+  id String @id @default(uuid())
+
+  guestWallId String
+  guestWall   GuestWall @relation(fields: [guestWallId], references: [id])
+
+  name    String
+  content String
+
+  website String?
+  status  GuestWallEntryStatus @default(PENDING)
+  pinned  Boolean              @default(false)
+
+  ipAddress          String?
+  ipAddressExpiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([guestWallId, status])
+  @@index([guestWallId, createdAt])
+}
