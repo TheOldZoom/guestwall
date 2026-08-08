@@ -8,8 +8,8 @@
 - [x] API
 - [x] Authentication
 - [x] User accounts
-- [ ] Guestwall creation
-- [ ] Public Guestwall
+- [x] Guestwall creation
+- [x] Public Guestwall
 - [ ] Message creation
 
 ### v0.2 — Actually usable

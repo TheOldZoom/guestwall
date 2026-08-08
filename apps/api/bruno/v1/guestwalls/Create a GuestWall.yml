@@ -1,0 +1,24 @@
+info:
+  name: Create a GuestWall
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/v1/guestwalls/"
+  body:
+    type: json
+    data: |-
+      {
+        "slug": "zoom",
+        "title": "Zoom's Amazing GuestWall",
+        "description": "TheOldZoom's Amazing GuestWall",
+        "requireApproval": false
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
