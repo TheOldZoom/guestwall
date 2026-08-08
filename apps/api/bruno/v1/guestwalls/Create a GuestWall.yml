@@ -15,7 +15,6 @@ http:
         "description": "TheOldZoom's Amazing GuestWall",
         "requireApproval": false
       }
-  auth: inherit
 
 settings:
   encodeUrl: true

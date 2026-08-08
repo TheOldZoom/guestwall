@@ -2,5 +2,3 @@ name: development
 variables:
   - name: BASE_URL
     value: http://localhost:3000
-  - name: TOKEN
-    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4OGM5YzBkNy00NzE2LTQxMzQtYTY1Yi03ODhlNGE4NTdkOTkiLCJ1c2VybmFtZSI6InRoZW9sZHpvb20iLCJleHAiOjE3ODc0MTU3MTAsImlhdCI6MTc4NjIwNjExMH0.C32wrN81iY-qN8XnzKgjmma0oRfpnlKZNnV07PPfMfU

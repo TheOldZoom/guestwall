@@ -1,4 +1,6 @@
+import { randomBytes } from "crypto";
 import { prisma } from "../libs/prisma";
+import { SESSION_DURATION_MS } from "../plugins/session";
 
 export class AuthError extends Error {
   constructor(
@@ -10,22 +12,32 @@ export class AuthError extends Error {
   }
 }
 
-export async function registerUser(
-  data: {
-    displayName?: string;
-    username: string;
-    email: string;
-    password: string;
-  },
-  sign: (payload: object) => Promise<string>,
-) {
+function generateSessionToken() {
+  return randomBytes(32).toString("hex");
+}
+
+async function createSession(userId: string) {
+  const token = generateSessionToken();
+  const expiresAt = new Date(Date.now() + SESSION_DURATION_MS);
+
+  await prisma.session.create({
+    data: { token, userId, expiresAt },
+  });
+
+  return { token, expiresAt };
+}
+
+export async function registerUser(data: {
+  displayName?: string;
+  username: string;
+  email: string;
+  password: string;
+}) {
   const username = data.username.toLowerCase().trim();
   const email = data.email.toLowerCase().trim();
 
   const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [{ username }, { email }],
-    },
+    where: { OR: [{ username }, { email }] },
   });
 
   if (existingUser) {
@@ -43,13 +55,10 @@ export async function registerUser(
     },
   });
 
-  const token = await sign({
-    sub: user.id,
-    username: user.username,
-  });
+  const session = await createSession(user.id);
 
   return {
-    token,
+    session,
     user: {
       id: user.id,
       username: user.username,
@@ -58,20 +67,10 @@ export async function registerUser(
   };
 }
 
-export async function loginUser(
-  data: {
-    email: string;
-    password: string;
-  },
-  sign: (payload: object) => Promise<string>,
-) {
+export async function loginUser(data: { email: string; password: string }) {
   const email = data.email.toLowerCase().trim();
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
     throw new AuthError("Invalid email or password", 401);
@@ -87,17 +86,18 @@ export async function loginUser(
     throw new AuthError("Invalid email or password", 401);
   }
 
-  const token = await sign({
-    sub: user.id,
-    username: user.username,
-  });
+  const session = await createSession(user.id);
 
   return {
-    token,
+    session,
     user: {
       id: user.id,
       username: user.username,
       displayName: user.displayName,
     },
   };
+}
+
+export async function logoutUser(token: string) {
+  await prisma.session.deleteMany({ where: { token } });
 }

@@ -13,7 +13,6 @@ http:
         "email": "theoldzoom@proton.me",
         "password": "CoolSecretPassword"
       }
-  auth: inherit
 
 settings:
   encodeUrl: true
