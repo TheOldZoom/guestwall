@@ -2,9 +2,9 @@
 
 ### v0.1 — Foundation
 
-- [ ] Repository
-- [ ] PostgreSQL
-- [ ] Prisma schema
+- [x] Repository
+- [x] PostgreSQL
+- [x] Prisma schema
 - [ ] API
 - [ ] Authentication
 - [ ] User accounts

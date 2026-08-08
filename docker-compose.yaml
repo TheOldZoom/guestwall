@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:18
+    container_name: guestwall-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: guestwall
+      POSTGRES_PASSWORD: guestwall_dev_password
+      POSTGRES_DB: guestwall
+    ports:
+      - "5432:5432"
+    volumes:
+      - guestwall_postgres:/var/lib/postgresql
+
+volumes:
+  guestwall_postgres:
