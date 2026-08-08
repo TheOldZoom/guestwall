@@ -1,5 +1,15 @@
 import { prisma } from "../libs/prisma";
 
+export class AuthError extends Error {
+  constructor(
+    message: string,
+    public status: number,
+  ) {
+    super(message);
+    this.name = "AuthError";
+  }
+}
+
 export async function registerUser(
   data: {
     displayName?: string;
@@ -19,7 +29,7 @@ export async function registerUser(
   });
 
   if (existingUser) {
-    throw new Error("Username or email already in use");
+    throw new AuthError("Username or email already in use", 409);
   }
 
   const passwordHash = await Bun.password.hash(data.password, "argon2id");
@@ -64,7 +74,7 @@ export async function loginUser(
   });
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new AuthError("Invalid email or password", 401);
   }
 
   const isPasswordValid = await Bun.password.verify(
@@ -74,7 +84,7 @@ export async function loginUser(
   );
 
   if (!isPasswordValid) {
-    throw new Error("Invalid email or password");
+    throw new AuthError("Invalid email or password", 401);
   }
 
   const token = await sign({
