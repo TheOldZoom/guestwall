@@ -1,0 +1,44 @@
+# GuestWall's Roadmap
+
+### v0.1 — Foundation
+
+- [ ] Repository
+- [ ] PostgreSQL
+- [ ] Prisma schema
+- [ ] API
+- [ ] Authentication
+- [ ] User accounts
+- [ ] Guestwall creation
+- [ ] Public Guestwall
+- [ ] Message creation
+
+### v0.2 — Actually usable
+
+- [ ] Dashboard
+- [ ] Message moderation
+- [ ] Delete/hide messages
+- [ ] Pin messages
+- [ ] Rate limiting
+- [ ] Basic anti-spam
+- [ ] Mobile UI
+- [ ] Proper error handling
+
+### v0.3 — The good stuff
+
+- [ ] Embed script
+- [ ] Customization
+- [ ] Themes
+- [ ] Wall preview
+- [ ] Share links
+- [ ] OpenGraph metadata
+- [ ] RSS feed
+
+### v1.0
+
+- [ ] Custom domains
+- [ ] Webhooks
+- [ ] API keys
+- [ ] Public API
+- [ ] Advanced moderation
+- [ ] Analytics
+- [ ] Multiple walls per account
