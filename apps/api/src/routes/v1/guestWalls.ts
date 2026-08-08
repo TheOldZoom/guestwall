@@ -1,6 +1,15 @@
-import { Elysia, status } from "elysia";
-import { createGuestWall, getGuestWallBySlug } from "../../services/guestWalls";
-import { createGuestWallSchema } from "../../schemas/guestWalls";
+import { Elysia, status, t } from "elysia";
+import {
+  createGuestWall,
+  getGuestWallBySlug,
+  getGuestWallsByOwner,
+  updateGuestWall,
+  deleteGuestWall,
+} from "../../services/guestWalls";
+import {
+  createGuestWallSchema,
+  updateGuestWallSchema,
+} from "../../schemas/guestWalls";
 import { authPlugin } from "../../plugins/auth";
 import { rateLimitByKey } from "../../libs/rateLimit";
 
@@ -8,6 +17,13 @@ export const v1GuestWallRoutes = new Elysia({
   prefix: "/guestwalls",
 })
   .use(authPlugin)
+  .get(
+    "/",
+    async ({ query, user }) => {
+      return await getGuestWallsByOwner(user.id, query.cursor);
+    },
+    { auth: true, query: t.Object({ cursor: t.Optional(t.String()) }) },
+  )
   .get("/:slug", async ({ params }) => {
     return await getGuestWallBySlug(params.slug);
   })
@@ -41,4 +57,19 @@ export const v1GuestWallRoutes = new Elysia({
       auth: true,
       body: createGuestWallSchema,
     },
+  )
+  .patch(
+    "/:slug",
+    async ({ params, body, user }) => {
+      return await updateGuestWall(params.slug, body, user.id);
+    },
+    { auth: true, body: updateGuestWallSchema },
+  )
+  .delete(
+    "/:slug",
+    async ({ params, user }) => {
+      await deleteGuestWall(params.slug, user.id);
+      return status(200, { success: true });
+    },
+    { auth: true },
   );

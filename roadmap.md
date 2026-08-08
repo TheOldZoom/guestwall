@@ -39,6 +39,5 @@
 - [ ] Custom domains
 - [ ] Webhooks
 - [ ] API keys
-- [ ] Advanced moderation
 - [ ] Analytics
 - [ ] Multiple walls per account

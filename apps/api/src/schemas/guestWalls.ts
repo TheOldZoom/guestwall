@@ -8,7 +8,7 @@ export const createGuestWallSchema = t.Object({
 
   title: t.String({
     minLength: 1,
-    maxLength: 128,
+    maxLength: 100,
   }),
 
   description: t.Optional(
@@ -18,4 +18,21 @@ export const createGuestWallSchema = t.Object({
   ),
 
   requireApproval: t.Boolean(),
+});
+
+export const updateGuestWallSchema = t.Object({
+  title: t.Optional(
+    t.String({
+      minLength: 1,
+      maxLength: 100,
+    }),
+  ),
+
+  description: t.Optional(
+    t.String({
+      maxLength: 2048,
+    }),
+  ),
+
+  requireApproval: t.Optional(t.Boolean()),
 });
