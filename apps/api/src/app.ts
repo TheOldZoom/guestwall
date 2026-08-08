@@ -2,6 +2,7 @@ import { Elysia, status } from "elysia";
 import { v1AuthRoutes } from "./routes/v1/auth";
 import { v1GuestWallRoutes } from "./routes/v1/guestWalls";
 import { prisma } from "./libs/prisma";
+import { v1EntryRoutes } from "./routes/v1/entries";
 
 const requestTimes = new WeakMap<Request, number>();
 const requestIds = new WeakMap<Request, string>();
@@ -77,4 +78,6 @@ export const app = new Elysia()
     }
   })
 
-  .group("/v1", (app) => app.use(v1AuthRoutes).use(v1GuestWallRoutes));
+  .group("/v1", (app) =>
+    app.use(v1AuthRoutes).use(v1GuestWallRoutes).use(v1EntryRoutes),
+  );

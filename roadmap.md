@@ -10,7 +10,7 @@
 - [x] User accounts
 - [x] Guestwall creation
 - [x] Public Guestwall
-- [ ] Message creation
+- [x] Message creation
 
 ### v0.2 — Actually usable
 
@@ -32,6 +32,7 @@
 - [ ] Share links
 - [ ] OpenGraph metadata
 - [ ] RSS feed
+- [ ] Add support for limited markdown
 
 ### v1.0
 

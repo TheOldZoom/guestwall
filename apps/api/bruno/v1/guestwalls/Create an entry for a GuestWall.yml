@@ -1,0 +1,26 @@
+info:
+  name: Create an entry for a GuestWall
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{BASE_URL}}/v1/guestwalls/:slug/entries"
+  params:
+    - name: slug
+      value: zoom
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Zoom",
+        "content": "67",
+        "website": "https://zoomhub.xyz"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
