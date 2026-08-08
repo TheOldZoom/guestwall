@@ -1,47 +1,41 @@
 import { Elysia, status } from "elysia";
-import {
-  createGuestWall,
-  getGuestWallBySlug,
-  GuestWallError,
-} from "../../services/guestWalls";
+import { createGuestWall, getGuestWallBySlug } from "../../services/guestWalls";
 import { createGuestWallSchema } from "../../schemas/guestWalls";
 import { authPlugin } from "../../plugins/auth";
+import { rateLimitByKey } from "../../libs/rateLimit";
 
 export const v1GuestWallRoutes = new Elysia({
   prefix: "/guestwalls",
 })
   .use(authPlugin)
   .get("/:slug", async ({ params }) => {
-    const { slug } = params;
-
-    try {
-      const wall = await getGuestWallBySlug(slug);
-      return wall;
-    } catch (error) {
-      if (error instanceof GuestWallError) {
-        return status(error.status, {
-          error: error.message,
-        });
-      }
-
-      throw error;
-    }
+    return await getGuestWallBySlug(params.slug);
   })
   .post(
     "/",
     async ({ body, user }) => {
-      try {
-        const wall = await createGuestWall(body, user.id);
-        return status(201, wall);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, {
-            error: error.message,
-          });
-        }
+      const existingWall = await getGuestWallBySlug(body.slug).catch(
+        () => null,
+      );
 
-        throw error;
+      if (existingWall) {
+        return status(409, {
+          error: "GuestWall already exists",
+        });
       }
+
+      const rateLimitResponse = rateLimitByKey("guestwall-create", user.id, {
+        windowMs: 60 * 60 * 1000,
+        max: 1,
+      });
+
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
+      const wall = await createGuestWall(body, user.id);
+
+      return status(201, wall);
     },
     {
       auth: true,

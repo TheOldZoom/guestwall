@@ -1,16 +1,9 @@
 import { randomBytes } from "crypto";
 import { prisma } from "../libs/prisma";
 import { SESSION_DURATION_MS } from "../plugins/session";
+import { AuthError } from "../libs/errors";
 
-export class AuthError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
-    super(message);
-    this.name = "AuthError";
-  }
-}
+export { AuthError };
 
 function generateSessionToken() {
   return randomBytes(32).toString("hex");

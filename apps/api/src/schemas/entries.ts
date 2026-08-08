@@ -17,6 +17,12 @@ export const createEntrySchema = t.Object({
       maxLength: 256,
     }),
   ),
+
+  homepage: t.Optional(
+    t.String({
+      maxLength: 256,
+    }),
+  ),
 });
 
 export const moderationQuerySchema = t.Object({

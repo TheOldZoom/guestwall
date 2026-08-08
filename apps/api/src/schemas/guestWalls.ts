@@ -8,7 +8,7 @@ export const createGuestWallSchema = t.Object({
 
   title: t.String({
     minLength: 1,
-    maxLength: 100,
+    maxLength: 128,
   }),
 
   description: t.Optional(

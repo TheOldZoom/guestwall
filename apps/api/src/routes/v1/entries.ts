@@ -13,8 +13,9 @@ import {
   createEntrySchema,
   moderationQuerySchema,
 } from "../../schemas/entries";
-import { GuestWallError } from "../../services/guestWalls";
 import { authPlugin } from "../../plugins/auth";
+import { rateLimit } from "../../libs/rateLimit";
+import { getClientIp } from "../../libs/net";
 
 export const v1EntryRoutes = new Elysia({
   prefix: "/guestwalls/:slug",
@@ -28,103 +29,60 @@ export const v1EntryRoutes = new Elysia({
   )
   .post(
     "/entries",
-    async ({ params, body }) => {
-      try {
-        const entry = await createEntry(params.slug, body);
-        return status(201, entry);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+    async ({ params, body, request }) => {
+      const entry = await createEntry(params.slug, body, getClientIp(request));
+
+      return status(201, entry);
     },
-    { body: createEntrySchema },
+    {
+      body: createEntrySchema,
+      beforeHandle: [
+        rateLimit("entry-create", { windowMs: 10 * 60 * 1000, max: 5 }),
+      ],
+    },
   )
 
   .use(authPlugin)
   .get(
     "/entries/moderation",
     async ({ params, query, user }) => {
-      try {
-        return await getEntriesForModeration(params.slug, user.id, query);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      return await getEntriesForModeration(params.slug, user.id, query);
     },
     { auth: true, query: moderationQuerySchema },
   )
   .patch(
     "/entries/:entryId/approve",
     async ({ params, user }) => {
-      try {
-        return await approveEntry(params.slug, params.entryId, user.id);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      return await approveEntry(params.slug, params.entryId, user.id);
     },
     { auth: true },
   )
   .patch(
     "/entries/:entryId/reject",
     async ({ params, user }) => {
-      try {
-        return await rejectEntry(params.slug, params.entryId, user.id);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      return await rejectEntry(params.slug, params.entryId, user.id);
     },
     { auth: true },
   )
   .patch(
     "/entries/:entryId/pin",
     async ({ params, user }) => {
-      try {
-        return await pinEntry(params.slug, params.entryId, user.id);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      return await pinEntry(params.slug, params.entryId, user.id);
     },
     { auth: true },
   )
   .patch(
     "/entries/:entryId/unpin",
     async ({ params, user }) => {
-      try {
-        return await unpinEntry(params.slug, params.entryId, user.id);
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      return await unpinEntry(params.slug, params.entryId, user.id);
     },
     { auth: true },
   )
   .delete(
     "/entries/:entryId",
     async ({ params, user }) => {
-      try {
-        await deleteEntry(params.slug, params.entryId, user.id);
-        return status(200, { success: true });
-      } catch (error) {
-        if (error instanceof GuestWallError) {
-          return status(error.status, { error: error.message });
-        }
-        throw error;
-      }
+      await deleteEntry(params.slug, params.entryId, user.id);
+      return status(200, { success: true });
     },
     { auth: true },
   );

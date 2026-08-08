@@ -1,8 +1,15 @@
 import { prisma } from "../libs/prisma";
 import { GuestWallError } from "./guestWalls";
 import { containsBannedWord } from "../libs/profanityFilter";
+import {
+  isHoneypotFilled,
+  looksLikeSpam,
+  isDuplicateSubmission,
+} from "../libs/antiSpam";
 
 const PAGE_SIZE = 20;
+
+const ENTRY_IP_RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
 
 type EntryCursor = {
   pinned: boolean;
@@ -114,7 +121,9 @@ export async function createEntry(
     name: string;
     content: string;
     website?: string;
+    homepage?: string;
   },
+  submitterIp: string,
 ) {
   const wall = await prisma.guestWall.findUnique({
     where: {
@@ -134,12 +143,55 @@ export async function createEntry(
     throw new GuestWallError("GuestWall not found", 404);
   }
 
-  const requireApproval = wall.guestWallSettings[0]?.requireApproval ?? false;
-
   const name = data.name.trim();
   const content = data.content.trim();
 
-  const flagged = containsBannedWord(name) || containsBannedWord(content);
+  if (isHoneypotFilled(data.homepage)) {
+    return {
+      id: crypto.randomUUID(),
+      name,
+      content,
+      website: data.website?.trim() || null,
+      status: "PENDING" as const,
+      createdAt: new Date(),
+    };
+  }
+
+  const hasKnownIp = submitterIp !== "unknown";
+  const now = new Date();
+
+  if (hasKnownIp) {
+    const existingEntry = await prisma.guestWallEntry.findFirst({
+      where: {
+        guestWallId: wall.id,
+        ipAddress: submitterIp,
+        OR: [{ ipAddressExpiresAt: null }, { ipAddressExpiresAt: { gt: now } }],
+      },
+      select: { id: true },
+    });
+
+    if (existingEntry) {
+      throw new GuestWallError(
+        "You've already left an entry on this GuestWall",
+        409,
+      );
+    }
+  }
+
+  if (isDuplicateSubmission(submitterIp, `${name}:${content}`)) {
+    throw new GuestWallError(
+      "This looks like a duplicate submission. Please wait before resubmitting.",
+      429,
+    );
+  }
+
+  const requireApproval = wall.guestWallSettings[0]?.requireApproval ?? false;
+
+  const flagged =
+    containsBannedWord(name) ||
+    containsBannedWord(content) ||
+    looksLikeSpam(content) ||
+    looksLikeSpam(name);
 
   const entry = await prisma.guestWallEntry.create({
     data: {
@@ -148,6 +200,10 @@ export async function createEntry(
       content,
       website: data.website?.trim() || null,
       status: requireApproval || flagged ? "PENDING" : "APPROVED",
+      ipAddress: hasKnownIp ? submitterIp : null,
+      ipAddressExpiresAt: hasKnownIp
+        ? new Date(now.getTime() + ENTRY_IP_RETENTION_MS)
+        : null,
     },
     select: {
       id: true,
@@ -160,6 +216,21 @@ export async function createEntry(
   });
 
   return entry;
+}
+
+export async function anonymizeExpiredEntryIps() {
+  const { count } = await prisma.guestWallEntry.updateMany({
+    where: {
+      ipAddress: { not: null },
+      ipAddressExpiresAt: { lte: new Date() },
+    },
+    data: {
+      ipAddress: null,
+      ipAddressExpiresAt: null,
+    },
+  });
+
+  return count;
 }
 
 export async function getOwnedWallId(slug: string, userId: string) {

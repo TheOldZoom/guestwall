@@ -18,10 +18,10 @@
 - [x] Message moderation
 - [x] Delete/hide messages
 - [x] Pin messages
-- [ ] Rate limiting
-- [ ] Basic anti-spam
+- [x] Rate limiting
+- [x] Basic anti-spam
 - [ ] Mobile UI
-- [ ] Proper error handling
+- [x] Proper error handling
 
 ### v0.3 — The good stuff
 

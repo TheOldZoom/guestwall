@@ -3,6 +3,9 @@ import { v1AuthRoutes } from "./routes/v1/auth";
 import { v1GuestWallRoutes } from "./routes/v1/guestWalls";
 import { prisma } from "./libs/prisma";
 import { v1EntryRoutes } from "./routes/v1/entries";
+import { AppError } from "./libs/errors";
+import { getClientIp } from "./libs/net";
+import { rateLimit } from "./libs/rateLimit";
 
 const requestTimes = new WeakMap<Request, number>();
 const requestIds = new WeakMap<Request, string>();
@@ -17,11 +20,7 @@ export const app = new Elysia()
     set.headers["X-Request-ID"] = requestId;
 
     const url = new URL(request.url);
-
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      request.headers.get("x-real-ip") ||
-      "unknown";
+    const ip = getClientIp(request);
 
     console.log(`→ ${request.method} ${url.pathname} [${requestId}] [${ip}]`);
   })
@@ -42,16 +41,43 @@ export const app = new Elysia()
     requestIds.delete(request);
   })
 
-  .onError(({ code, error }) => {
+  .onBeforeHandle(rateLimit("global", { windowMs: 5 * 60 * 1000, max: 300 }))
+
+  .onError(({ code, error, set, request }) => {
     if (code === "VALIDATION") {
+      set.status = 422;
       return {
         error: "Validation failed",
-        fields: error.all.map((error) => ({
-          field: error.path.replace("/", ""),
-          message: error.message,
+        fields: error.all.map((fieldError) => ({
+          field: fieldError.path.replace("/", ""),
+          message: fieldError.message,
         })),
       };
     }
+
+    if (error instanceof AppError) {
+      set.status = error.status;
+      return { error: error.message };
+    }
+
+    if (code === "NOT_FOUND") {
+      set.status = 404;
+      return { error: "Not found" };
+    }
+
+    if (code === "PARSE") {
+      set.status = 400;
+      return { error: "Malformed request body" };
+    }
+
+    const url = new URL(request.url);
+    console.error(
+      `Unhandled error on ${request.method} ${url.pathname}:`,
+      error,
+    );
+
+    set.status = 500;
+    return { error: "Internal server error" };
   })
 
   .get("/health", async () => {

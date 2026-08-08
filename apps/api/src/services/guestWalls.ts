@@ -1,14 +1,7 @@
 import { prisma } from "../libs/prisma";
+import { GuestWallError } from "../libs/errors";
 
-export class GuestWallError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-  ) {
-    super(message);
-    this.name = "GuestWallError";
-  }
-}
+export { GuestWallError };
 
 export async function getGuestWallBySlug(slug: string) {
   const wall = await prisma.guestWall.findUnique({
