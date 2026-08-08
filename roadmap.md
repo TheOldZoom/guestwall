@@ -5,9 +5,9 @@
 - [x] Repository
 - [x] PostgreSQL
 - [x] Prisma schema
-- [ ] API
-- [ ] Authentication
-- [ ] User accounts
+- [x] API
+- [x] Authentication
+- [x] User accounts
 - [ ] Guestwall creation
 - [ ] Public Guestwall
 - [ ] Message creation
