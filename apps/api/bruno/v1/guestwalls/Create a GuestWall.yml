@@ -10,7 +10,7 @@ http:
     type: json
     data: |-
       {
-        "slug": "legal",
+        "slug": "zoom",
         "title": "Zoom's Amazing GuestWall",
         "description": "TheOldZoom's Amazing GuestWall",
         "requireApproval": false
