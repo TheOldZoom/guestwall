@@ -1,4 +1,5 @@
 name: development
 variables:
   - name: BASE_URL
-    value: http://localhost:3000
+    value: http://rifts.local/api
+    description: ""

@@ -1,1 +1,104 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius));
+  --radius-md: calc(var(--radius));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius));
+}
+
+:root {
+  --background: #e9e9e9;
+  --foreground: #0a0a0a;
+
+  --card: #e9e9e9;
+  --card-foreground: #0a0a0a;
+
+  --popover: #e9e9e9;
+  --popover-foreground: #0a0a0a;
+
+  --primary: #000000;
+  --primary-foreground: #e9e9e9;
+
+  --secondary: #d4d4d4;
+  --secondary-foreground: #0a0a0a;
+
+  --muted: #6b6b6b;
+  --muted-foreground: #d4d4d4;
+
+  --accent: #000000;
+  --accent-foreground: #e9e9e9;
+
+  --destructive: #b91c1c;
+
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #0a0a0a;
+
+  --radius: 0rem;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #e9e9e9;
+
+  --card: #0a0a0a;
+  --card-foreground: #e9e9e9;
+
+  --popover: #171717;
+  --popover-foreground: #e9e9e9;
+
+  --primary: #ffffff;
+  --primary-foreground: #0a0a0a;
+
+  --secondary: #2a2a2a;
+  --secondary-foreground: #e9e9e9;
+
+  --muted: #2a2a2a;
+  --muted-foreground: #9a9a9a;
+
+  --accent: #ffffff;
+  --accent-foreground: #0a0a0a;
+
+  --destructive: #ef4444;
+
+  --border: #d4d4d4;
+  --input: #d4d4d4;
+  --ring: #e9e9e9;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+  }
+}
